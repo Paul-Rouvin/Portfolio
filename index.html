@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paul — Cybersécurité & Systèmes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #0b0d0f;
+      --bg2:       #111418;
+      --bg3:       #181c22;
+      --border:    #1e2530;
+      --text:      #c8cdd6;
+      --muted:     #5a6270;
+      --accent:    #4dd9c0;
+      --accent2:   #1e8a78;
+      --highlight: #ffffff;
+      --danger:    #e05c5c;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* Grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 3rem;
+      background: rgba(11,13,15,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.1rem;
+      color: var(--highlight);
+      letter-spacing: 0.02em;
+    }
+
+    .nav-logo span { color: var(--accent); }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2.5rem;
+    }
+
+    nav ul a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    nav ul a:hover { color: var(--accent); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 8rem 3rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 60px 60px;
+      opacity: 0.3;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent);
+    }
+
+    .hero-content {
+      max-width: 800px;
+      position: relative;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    .hero-tag {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .hero-tag::before {
+      content: '';
+      width: 2rem;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      color: var(--highlight);
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      font-weight: 400;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      max-width: 520px;
+      line-height: 1.9;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+      font-weight: 500;
+    }
+
+    .btn-primary:hover {
+      background: var(--highlight);
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      padding: 6rem 3rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      color: var(--highlight);
+      font-weight: 400;
+      margin-bottom: 3rem;
+    }
+
+    /* ── ABOUT ── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .about-text p {
+      color: var(--muted);
+      line-height: 2;
+      margin-bottom: 1rem;
+      font-size: 0.82rem;
+    }
+
+    .about-text p strong {
+      color: var(--text);
+    }
+
+    .skills-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .skill-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .skill-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    .skill-header span:last-child { color: var(--accent); }
+
+    .skill-bar {
+      height: 2px;
+      background: var(--border);
+      border-radius: 1px;
+      overflow: hidden;
+    }
+
+    .skill-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent2), var(--accent));
+      border-radius: 1px;
+      animation: fillBar 1.2s ease both;
+      animation-delay: var(--delay, 0s);
+    }
+
+    @keyframes fillBar {
+      from { width: 0; }
+    }
+
+    /* ── PROJECTS ── */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .project-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2rem;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .project-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .project-card:hover {
+      border-color: var(--accent2);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    }
+
+    .project-card:hover::before { opacity: 1; }
+
+    .project-type {
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .project-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.3rem;
+      color: var(--highlight);
+      font-weight: 400;
+      line-height: 1.3;
+    }
+
+    .project-desc {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.85;
+      flex: 1;
+    }
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .tag {
+      font-size: 0.62rem;
+      padding: 0.25rem 0.6rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+
+    .project-link {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.7rem;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      margin-top: 0.5rem;
+      transition: gap 0.2s;
+    }
+
+    .project-card:hover .project-link { gap: 0.7rem; }
+
+    /* ── PLATFORMS ── */
+    .platforms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .platform-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1.5rem;
+      text-decoration: none;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .platform-card:hover {
+      border-color: var(--accent2);
+      transform: translateY(-2px);
+    }
+
+    .platform-name {
+      font-size: 0.8rem;
+      color: var(--highlight);
+      font-weight: 500;
+    }
+
+    .platform-desc {
+      font-size: 0.68rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── CONTACT ── */
+    #contact {
+      border-top: 1px solid var(--border);
+    }
+
+    .contact-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+
+    .contact-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.75rem;
+      transition: color 0.2s;
+    }
+
+    .contact-link:hover { color: var(--accent); }
+
+    .contact-link::before {
+      content: '→';
+      color: var(--accent);
+    }
+
+    .contact-note {
+      font-size: 0.68rem;
+      color: var(--muted);
+      line-height: 1.8;
+      max-width: 300px;
+      text-align: right;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 2rem 3rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    footer span { color: var(--accent); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .project-card:nth-child(1) { animation-delay: 0.1s; }
+    .project-card:nth-child(2) { animation-delay: 0.2s; }
+    .project-card:nth-child(3) { animation-delay: 0.3s; }
+
+    /* ── DIVIDER ── */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 0 auto;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      nav ul { gap: 1.5rem; }
+      #hero { padding: 7rem 1.5rem 3rem; }
+      section { padding: 4rem 1.5rem; }
+      .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .contact-inner { flex-direction: column; align-items: flex-start; }
+      .contact-note { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">P<span>.</span>Portfolio</div>
+    <ul>
+      <li><a href="#about">Profil</a></li>
+      <li><a href="#projects">Projets</a></li>
+      <li><a href="#platforms">Plateformes</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero" style="max-width:100%; padding-top:8rem;">
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+      <div class="hero-tag">En alternance · BTS SIO SISR · Rennes</div>
+      <h1>Paul<br><em>Cybersécurité</em><br>& Systèmes</h1>
+      <p class="hero-desc">
+        Artiste 3D reconverti dans l'IT et la cybersécurité. 
+        Passionné par l'IA, les systèmes, et la résolution de problèmes complexes. 
+        En recherche d'alternance pour septembre 2025.
+      </p>
+      <div class="hero-cta">
+        <a href="#projects" class="btn btn-primary">Voir mes projets →</a>
+        <a href="#contact" class="btn btn-ghost">Me contacter</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <p class="section-label">// 01 — Profil</p>
+    <h2>À propos</h2>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>
+          Ancien <strong>artiste 3D généraliste</strong> (MPC/Technicolor, ESRA Paris), 
+          je me réoriente vers l'IT et la cybersécurité avec une approche technique solide 
+          et une sensibilité aux systèmes complexes.
+        </p>
+        <p>
+          Ma reconversion n'est pas un pivot total — elle prolonge une pratique de la 
+          <strong>résolution de problèmes</strong>, de l'automatisation de workflows, 
+          et de l'exploration technique que j'ai développée dans le domaine créatif.
+        </p>
+        <p>
+          Actuellement en formation BTS SIO SISR, je prépare parallèlement un 
+          <strong>Mastère Cybersécurité</strong> à CyberSchool (Université de Rennes).
+        </p>
+      </div>
+      <div class="skills-list">
+        <div class="skill-item">
+          <div class="skill-header"><span>Python / Scripting</span><span>★★★☆☆</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:60%; --delay:0.1s"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span>Linux / Administration</span><span>★★★☆☆</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:55%; --delay:0.2s"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span>Réseaux / TCP-IP</span><span>★★☆☆☆</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:40%; --delay:0.3s"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span>Machine Learning / LLMs</span><span>★★★★☆</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:75%; --delay:0.4s"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span>3D / Pipeline technique</span><span>★★★★★</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:90%; --delay:0.5s"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-header"><span>SOC / Analyse de logs</span><span>★★☆☆☆</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:35%; --delay:0.6s"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <p class="section-label">// 02 — Projets</p>
+    <h2>Réalisations</h2>
+    <div class="projects-grid">
+
+      <!-- Projet 1 : GPT-J -->
+      <div class="project-card">
+        <div class="project-type">IA · LLM · Déploiement</div>
+        <div class="project-title">Agent conversationnel GPT-J avec états émotionnels</div>
+        <div class="project-desc">
+          Fine-tuning d'un modèle de langage open-source (GPT-J) avec un système 
+          de tags d'état émotionnel personnalisé. Déployé via Ngrok sur serveur local, 
+          avec une représentation visuelle 3D de l'agent en temps réel.
+        </div>
+        <div class="project-tags">
+          <span class="tag">Python</span>
+          <span class="tag">GPT-J</span>
+          <span class="tag">Fine-tuning</span>
+          <span class="tag">Ngrok</span>
+          <span class="tag">3D</span>
+        </div>
+        <!-- Remplace # par ton vrai lien GitHub -->
+        <a href="#" class="project-link">Voir sur GitHub →</a>
+      </div>
+
+      <!-- Projet 2 : Assets 3D -->
+      <div class="project-card">
+        <div class="project-type">Scripting · Base de données · Automatisation</div>
+        <div class="project-title">Gestionnaire d'assets 3D avec export automatisé</div>
+        <div class="project-desc">
+          Outil de gestion d'une bibliothèque d'assets 3D : indexation dans une base 
+          de données, export automatique des fichiers avec capture d'écran associée. 
+          Automatise un workflow fastidieux en production.
+        </div>
+        <div class="project-tags">
+          <span class="tag">Python</span>
+          <span class="tag">SQLite</span>
+          <span class="tag">Blender API</span>
+          <span class="tag">Automatisation</span>
+        </div>
+        <!-- Remplace # par ton vrai lien GitHub -->
+        <a href="#" class="project-link">Voir sur GitHub →</a>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- PLATFORMS -->
+  <section id="platforms">
+    <p class="section-label">// 03 — Plateformes</p>
+    <h2>Entraînement & certifications</h2>
+    <div class="platforms-grid">
+
+      <a href="#" class="platform-card">
+        <!-- Remplace # par ton profil TryHackMe -->
+        <div class="project-type">SOC · Blue Team</div>
+        <div class="platform-name">TryHackMe</div>
+        <div class="platform-desc">Parcours SOC Level 1 — analyse de logs, SIEM, threat hunting.</div>
+      </a>
+
+      <a href="#" class="platform-card">
+        <!-- Remplace # par ton profil Root-Me -->
+        <div class="project-type">CTF · Challenges</div>
+        <div class="platform-name">Root-Me</div>
+        <div class="platform-desc">Challenges web, réseau, cryptographie et forensics.</div>
+      </a>
+
+      <a href="#" class="platform-card">
+        <!-- Remplace # par ton GitHub -->
+        <div class="project-type">Code · Projets</div>
+        <div class="platform-name">GitHub</div>
+        <div class="platform-desc">Dépôts de projets personnels, scripts et write-ups CTF.</div>
+      </a>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <p class="section-label">// 04 — Contact</p>
+    <h2>Entrer en contact</h2>
+    <div class="contact-inner">
+      <div class="contact-links">
+        <!-- Remplace les # et les placeholders par tes vraies infos -->
+        <a href="mailto:ton.email@exemple.com" class="contact-link">ton.email@exemple.com</a>
+        <a href="https://linkedin.com/in/ton-profil" class="contact-link" target="_blank">LinkedIn</a>
+        <a href="https://github.com/ton-username" class="contact-link" target="_blank">GitHub</a>
+      </div>
+      <div class="contact-note">
+        Disponible pour une alternance BTS SIO SISR<br>
+        à partir de septembre 2025 — région Rennes.
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>Paul</span> · Portfolio cybersécurité · Rennes, France
+  </footer>
+
+</body>
+</html>
